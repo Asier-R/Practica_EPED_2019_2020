@@ -1,35 +1,37 @@
 package es.uned.lsi.eped.pract2019_2020;
 
+import es.uned.lsi.eped.DataStructures.List;
+import es.uned.lsi.eped.DataStructures.Sequence;
+
 public class WordListN {
 	/* Atributos de la clase con la estructura adecuada */
 	private int size;
 
-	private InnerList li;
+	private List<String> li;
 	/* Atributos de la clase con la estructura adecuada */
 
 	public WordListN(int size) {
 		this.size = size;
+
 	}
 	
-	public void add(String word) {
-		boolean goForth = true;
-		InnerList current;
+	public void add(String word) { //Añade palabra nueva ordenada alfabeticamente.
+		int counter = 1;
 		if(li==null){
-			li = new InnerList(word);
-			current = li;
+			li = new List<String>();
+			li.set(1,word);
 		}else{
-			while(goForth){
-				switch (li.getMyWord().compareToIgnoreCase(word)){
-					case -1:
-						break;
-
-					case 0:
-						break;
-
-					case 1:
-						break;
+			while( counter <= li.size() ){ // Recorrer toda la lista e insertar O(N^2). QUITAR SI VIENEN ORDENADAS. ASIER
+				if(word.compareTo(li.get(counter)) < 0){
+					// Insertar antes de primer elemento mas grande.
+					li.insert(counter,word);
+					// Finalizar bucle.
+					counter = li.size();
+				}else if( (word.compareTo(li.get(counter)) > 0) && (counter==li.size())){
+					//Si estamos en el ultimo y este es mas pequeño que word, insertar al final.
+					li.insert(li.size()+1,word);
 				}
-
+				counter++;
 			}
 		}
 	}
@@ -40,7 +42,7 @@ public class WordListN {
 	
 	public String toString() {
 		StringBuilder salida = new StringBuilder();
-		int numPalabras = /* Longitud de la secuencia de palabras */
+		int numPalabras = li.size();/* Longitud de la secuencia de palabras */
 		salida.append("-Palabras de ");
 		salida.append(this.getWordSize());
 		salida.append(" letra");
@@ -48,9 +50,9 @@ public class WordListN {
 		salida.append(": ");
 		for (int pos = 1 ; pos <= numPalabras ; pos++) {
 			/* Estas líneas dependen de la estructura escogida */
-			String word = /* Obtener la siguiente palabra */
+			String word = li.get(pos);/* Obtener la siguiente palabra */
 			/* Avanzar a la siguiente sin destruir la estructura */
-			...
+			//...recorremos la lista entera con get(pos) O(N^2)
 			/* Estas líneas dependen de la estructura escogida */
 			salida.append(word);
 			if ( pos < numPalabras ) {
@@ -59,55 +61,5 @@ public class WordListN {
 		}
 		salida.append('\n');
 		return salida.toString();
-	}
-
-	private class InnerList {
-
-		String myWord;
-
-		InnerList first;
-		InnerList prev;
-		InnerList next;
-
-		InnerList(String myWord){
-			this.prev = null;
-			this.next = null;
-			this.first = this;
-			this.myWord = myWord;
-		}
-
-		InnerList(InnerList prev, InnerList next, String myWord){
-			this.prev = prev;
-			this.next = next;
-			this.myWord = myWord;
-		}
-
-		void setPrev(InnerList prev){
-			this.prev = prev;
-		}
-
-		void setNext(InnerList next){
-			this.next = next;
-		}
-
-		void setFirst(InnerList first){
-			this.first = first;
-		}
-
-		InnerList getFirst(){
-			return this.first;
-		}
-
-		InnerList getPrev(){
-			return this.prev;
-		}
-
-		InnerList getNext(){
-			return this.next;
-		}
-
-		String getMyWord(){
-			return myWord;
-		}
 	}
 }

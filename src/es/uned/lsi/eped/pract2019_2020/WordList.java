@@ -10,7 +10,11 @@ public class WordList {
 		this.wordList = new List<WordListN>();
 	}
 	
-	public void add(String word) {...}
+	public void add(String word) {
+
+		//if()
+
+	}
 	
 	public String toString() {
 		StringBuilder salida = new StringBuilder();

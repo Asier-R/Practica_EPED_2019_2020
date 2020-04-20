@@ -5,8 +5,9 @@ import es.uned.lsi.eped.DataStructures.GTreeIF;
 
 public class Dictionary {
 
-	private GTree<Node> dict; /* El diccionario es un árbol general de nodos */
-	
+	// Restaurar //private GTree<Node> dict; /* El diccionario es un árbol general de nodos */
+	public GTree<Node> dict; /* El diccionario es un árbol general de nodos */
+
 	/* Constructor de la clase */
 	public Dictionary() {...}
 	
