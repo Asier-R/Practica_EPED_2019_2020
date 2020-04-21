@@ -19,7 +19,7 @@ public class WordListN {
 		int counter = 1;
 		if(li==null){
 			li = new List<String>();
-			li.set(1,word);
+			li.insert(1,word);
 		}else{
 			while( counter <= li.size() ){ // Recorrer toda la lista e insertar O(N^2). QUITAR SI VIENEN ORDENADAS. ASIER
 				if(word.compareTo(li.get(counter)) < 0){
