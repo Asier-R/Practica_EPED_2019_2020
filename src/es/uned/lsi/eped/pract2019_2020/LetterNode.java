@@ -12,4 +12,8 @@ public class LetterNode extends Node {
     public NodeType getNodeType() {
         return NodeType.LETTERNODE;
     }
+
+    public char getCaracter(){
+        return caracter;
+    }
 }
