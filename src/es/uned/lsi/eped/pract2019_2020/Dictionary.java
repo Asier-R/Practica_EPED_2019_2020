@@ -30,8 +30,8 @@ public class Dictionary {
 
 		Queue<Character> cola = new Queue();
 
-		for(int i=0; i<word.length(); i++){
-			cola.enqueue(word.charAt(i));
+		for(int i=0; i<word.length(); i++){ // O(N)
+			cola.enqueue(word.charAt(i)); // charAt(i)-->O(1)
 		}
 
 		recursiveInsert(cola,node);
@@ -70,62 +70,85 @@ public class Dictionary {
 
 	}
 
-	private void recursiveInsert(Queue<Character> laCola, GTreeIF<Node> node){
-		Queue<Character> cola = laCola;
-		char letraHijo;
-		char letraActual = cola.getFirst();
-		int posicion = 1;
-		Node hijo;
-		boolean presente = false;
-		boolean insertar = false;
+	private void recursiveInsert(Queue<Character> cola, GTreeIF<Node> node){
 		GTreeIF<Node> gt = new GTree<Node>();
-		System.out.println("Inicio con letra: "+letraActual);
+		LetterNode nd;
+		int pos=0;
 
-		for(int i=1; i<=node.getChildren().size(); i++){ // Recorrer todos los hijos y mirar si esta la letra.
-			hijo = node.getChild(i).getRoot();
-			System.out.println("Bucle...tipo nodo hijo: "+hijo.getNodeType().toString());
-			if(hijo.getNodeType() == Node.NodeType.LETTERNODE && ((LetterNode) hijo).getCaracter() == letraActual){
-				letraHijo = (((LetterNode) hijo).getCaracter());
-				System.out.println("LetraHijo: "+letraHijo+"  LetraActual: "+letraActual);
-				if(letraHijo == letraActual){
-					presente = true;
-					posicion = i; // guardamos posicion del hijo que nos interesa.
-					i = node.getChildren().size(); // salimos del bucle.
+		if(node.getRoot().getNodeType() != Node.NodeType.WORDNODE){
 
-				}else if(letraHijo > letraActual){
-					insertar = true;
-					posicion = i-1; // guardamos posicion del hijo que nos interesa.
-					i = node.getChildren().size();
+			for(int i=1; cola.size()>0 && i<=node.getNumChildren(); i++){ // buscar posicion de la nueva letra
+				gt = node.getChild(i);
+
+				if(gt.getRoot().getNodeType() != Node.NodeType.WORDNODE) {
+
+					nd = (LetterNode) node.getChild(i).getRoot();
+
+					if (nd.getCaracter() < cola.getFirst()) {
+						pos = i + 1;
+
+					} else if (nd.getCaracter() > cola.getFirst()) {
+						pos = i;
+						i = node.getNumChildren(); //salir
+
+					} else if (nd.getCaracter() == cola.getFirst()) {
+						pos = 0;
+						i = node.getNumChildren(); //salir
+
+					}
 
 				}
 
 			}
-		}
 
-		if(presente){
-			System.out.println("Letra SI presente!");
-			gt = node.getChild(posicion); // si letra ya esta en diccionario se pasa ese nodo a funcion recursiva.
-		}else if(insertar || (node.getRoot().getNodeType() != Node.NodeType.WORDNODE)){
-			System.out.println("Letra NO presente!");
-			gt.setRoot(new LetterNode(letraActual)); // si letra no esta en diccionario se crea nodo nuevo y se pasa a funcion recursiva.
-			node.getChildren().insert(posicion,gt); // se inserta el nuevo nodo en la lista de hijos del nodo actual.
-		}else if((node.getRoot().getNodeType() == Node.NodeType.ROOTNODE)) {
-			System.out.println("PRIMERA LETRA INTRODUCIDA EN EL DICCIONARIO");
-			gt.setRoot(new LetterNode(letraActual));
-			node.getChildren().insert(1, gt);
-			presente = true;
+			if(pos != 0) {
+				gt = new GTree<Node>();
+				gt.setRoot(new LetterNode(cola.getFirst()));
+				node.addChild(pos, gt);
 
-		}
+				if(cola.size()>0)cola.dequeue();
 
-		cola.dequeue(); // se elimina una letra de la cola (no da error en size 0 porque esta controlado internamente).
+				if(cola.size() == 0){
+					WordNode wn = new WordNode();
+					GTreeIF<Node> aux = new GTree<Node>();
+					aux.setRoot(wn);
+					gt.addChild(1,aux);
+				}
 
-		if(!cola.isEmpty() && (node.getRoot().getNodeType() != Node.NodeType.WORDNODE)){//(presente || insertar)) {
-			System.out.println("LLamamos a recursiva...para letra: "+cola.getFirst());
-			recursiveInsert(cola, gt); // se repite funcion recursiva si cola no es vacia
-		}else if(cola.isEmpty() && node.getChildren().size() == 0){ // si fin palabra y no hijos aun, insertar hijo WN.
-			System.out.println("FIN de palabra WN");
-			gt.setRoot(new WordNode());
-			node.getChildren().insert(node.getChildren().size()+1,gt);
+			}else if(node.getRoot().getNodeType() != Node.NodeType.WORDNODE && node.getNumChildren()==0){
+
+				gt = new GTree<Node>();
+				gt.setRoot(new LetterNode(cola.getFirst()));
+				node.addChild(1, gt);
+
+				if(cola.size()>0)cola.dequeue();
+
+				if(cola.size() == 0){
+					WordNode wn = new WordNode();
+					GTreeIF<Node> aux = new GTree<Node>();
+					aux.setRoot(wn);
+					gt.addChild(1,aux);
+				}
+
+			}else{
+
+				if(cola.size()>0)cola.dequeue();
+
+				if(cola.size() == 0 &&
+						node.getNumChildren()!=0 &&
+						node.getChild(1).getRoot().getNodeType() != Node.NodeType.WORDNODE){
+
+					WordNode wn = new WordNode();
+					GTreeIF<Node> aux = new GTree<Node>();
+					aux.setRoot(wn);
+					gt.addChild(1,aux);
+
+				}
+				
+			}
+
+			if(cola.size() > 0 )recursiveInsert(cola,gt);
+
 		}
 
 	}
