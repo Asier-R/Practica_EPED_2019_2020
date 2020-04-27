@@ -49,7 +49,36 @@ public class Dictionary {
 	private void searchInTree(String sequence, String word,
 							  GTreeIF<Node> node, WordList salida) {
 
+		if(sequence.length() == 0) return; // si vacio, salir.
 
+		LetterNode ln;
+		GTreeIF<Node> gt = node.getChild(1);
+		boolean encontrado = false;
+
+		for(int i=1; i<=node.getNumChildren(); i++){ // O(N^2)
+			gt = node.getChild(i);
+
+			if(gt.getRoot().getNodeType() == Node.NodeType.LETTERNODE){
+
+				ln = (LetterNode) node.getChild(i).getRoot();
+
+				for(int j=0; j<sequence.length(); j++){ // O(N) --> O(N) + O(N)
+					if(sequence.charAt(j)==ln.getCaracter()){ // O(1)
+						word += sequence.charAt(j);
+						sequence = eliminarLetra(sequence,sequence.charAt(j));// O(N) se ejecuta cuando se termina el bucle.
+						encontrado = true;
+						j = sequence.length();
+						i = node.getNumChildren(); //salimos de los dos bucles
+					}
+				}
+
+			}else if(gt.getRoot().getNodeType() == Node.NodeType.WORDNODE){
+				salida.add(word);
+			}
+
+		}
+
+		if(encontrado && node.getNumChildren() > 0) searchInTree(sequence, word, gt, salida);
 
 	}
 	
@@ -70,6 +99,20 @@ public class Dictionary {
 
 	}
 
+	private String eliminarLetra(String sequence, char letra){
+		boolean quitado = false;
+		String retorno = "";
+		for(int i=0; i<sequence.length(); i++){
+			if(sequence.charAt(i) == letra && !quitado){
+				quitado=true;
+			}
+			else {
+				retorno += sequence.charAt(i);
+			}
+		}
+		return retorno;
+	}
+
 	private void recursiveInsert(Queue<Character> cola, GTreeIF<Node> node){
 		GTreeIF<Node> gt = new GTree<Node>();
 		LetterNode nd;
@@ -77,7 +120,7 @@ public class Dictionary {
 
 		if(node.getRoot().getNodeType() != Node.NodeType.WORDNODE){
 
-			for(int i=1; cola.size()>0 && i<=node.getNumChildren(); i++){ // buscar posicion de la nueva letra
+			for(int i=1; cola.size()>0 && i<=node.getNumChildren(); i++){
 				gt = node.getChild(i);
 
 				if(gt.getRoot().getNodeType() != Node.NodeType.WORDNODE) {
@@ -144,7 +187,7 @@ public class Dictionary {
 					gt.addChild(1,aux);
 
 				}
-				
+
 			}
 
 			if(cola.size() > 0 )recursiveInsert(cola,gt);
