@@ -49,37 +49,37 @@ public class Dictionary {
 	private void searchInTree(String sequence, String word,
 							  GTreeIF<Node> node, WordList salida) {
 
-		if(sequence.length() == 0) return; // si vacio, salir.
-
 		LetterNode ln;
-		GTreeIF<Node> gt = node.getChild(1);
+		GTreeIF<Node> gt;
 		boolean encontrado = false;
+		String auxSeq = sequence;
+		String auxWord = word;
 
-		for(int i=1; i<=node.getNumChildren(); i++){ // O(N^2)
+		for (int i = 1; i <= node.getNumChildren(); i++) { // O(N^2)
 			gt = node.getChild(i);
+			sequence = auxSeq;
+			word = auxWord;
 
-			if(gt.getRoot().getNodeType() == Node.NodeType.LETTERNODE){
-
+			if (gt.getRoot().getNodeType() == Node.NodeType.LETTERNODE) {
 				ln = (LetterNode) node.getChild(i).getRoot();
 
-				for(int j=0; j<sequence.length(); j++){ // O(N) --> O(N) + O(N)
-					if(sequence.charAt(j)==ln.getCaracter()){ // O(1)
+				for (int j = 0; j < sequence.length(); j++) { // O(N) --> O(N) + O(N)
+
+					if (sequence.charAt(j) == ln.getCaracter()) { // O(1)
 						word += sequence.charAt(j);
-						sequence = eliminarLetra(sequence,sequence.charAt(j));// O(N) se ejecuta cuando se termina el bucle.
+						sequence = eliminarLetra(sequence, sequence.charAt(j));// O(N) se ejecuta cuando se termina el bucle.
 						encontrado = true;
 						j = sequence.length();
-						i = node.getNumChildren(); //salimos de los dos bucles
 					}
 				}
+				if(encontrado) {
+					searchInTree(sequence, word, gt, salida);
+				}
 
-			}else if(gt.getRoot().getNodeType() == Node.NodeType.WORDNODE){
+			} else if (gt.getRoot().getNodeType() == Node.NodeType.WORDNODE) {
 				salida.add(word);
 			}
-
 		}
-
-		if(encontrado && node.getNumChildren() > 0) searchInTree(sequence, word, gt, salida);
-
 	}
 	
 	/* Método público de búsqueda de todas las palabras de tamaño size a partir de una secuencia */
