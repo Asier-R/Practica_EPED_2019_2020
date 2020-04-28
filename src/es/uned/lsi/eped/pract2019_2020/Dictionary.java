@@ -94,9 +94,38 @@ public class Dictionary {
 							   GTreeIF<Node> node, WordListN salida,
 							   int size) {
 
+		LetterNode ln;
+		GTreeIF<Node> gt;
+		boolean encontrado = false;
+		String auxSeq = sequence;
+		String auxWord = word;
 
+		for (int i = 1; i <= node.getNumChildren(); i++) { // O(N^2)
+			gt = node.getChild(i);
+			sequence = auxSeq;
+			word = auxWord;
 
+			if (gt.getRoot().getNodeType() == Node.NodeType.LETTERNODE  && size > 0) {
 
+				ln = (LetterNode) node.getChild(i).getRoot();
+
+				for (int j = 0; j < sequence.length(); j++) { // O(N) --> O(N) + O(N)
+					if (sequence.charAt(j) == ln.getCaracter()) { // O(1)
+						word += sequence.charAt(j);
+						sequence = eliminarLetra(sequence, sequence.charAt(j));// O(N) se ejecuta cuando se termina el bucle.
+						encontrado = true;
+						j = sequence.length(); // Salimos.
+					}
+				}
+				if(encontrado) {
+					searchInTreeN(sequence, word, gt, salida,size-1);
+				}
+
+			} else if (gt.getRoot().getNodeType() == Node.NodeType.WORDNODE && size == 0) {
+				salida.add(word);
+				i = node.getNumChildren(); // Salimos.
+			}
+		}
 	}
 
 	private String eliminarLetra(String sequence, char letra){

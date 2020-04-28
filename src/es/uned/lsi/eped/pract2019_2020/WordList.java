@@ -27,12 +27,12 @@ public class WordList {
 				if(wln.getWordSize() == word.length()){ // Si mismo tamaño, añadir palabra.
 					wln.add(word);
 					counter = wordList.size()+1; // Salimos
-				}else if(wln.getWordSize() < word.length() && counter==wordList.size()){ // Si mas grande y no quedan mas, crear nuevo y añadir.
+				}else if(wln.getWordSize() > word.length() && counter==wordList.size()){ // Si mas grande y no quedan mas, crear nuevo y añadir.
 					wln = new WordListN(word.length());
 					wln.add(word);
 					wordList.insert(counter+1, wln); // Añadimos al final
 					counter = wordList.size()+1; // Salimos
-				}else if(wln.getWordSize() > word.length()){ // Si mas pequeño, crear e insertar en ese pos y añadir palabra.
+				}else if(wln.getWordSize() < word.length()){ // Si mas pequeño, crear e insertar en ese pos y añadir palabra.
 					wln = new WordListN(word.length());
 					wln.add(word);
 					wordList.insert(counter, wln); // Añadimos en la posicion donde hemos econtrado el siguiente mas grande al nuestro.
