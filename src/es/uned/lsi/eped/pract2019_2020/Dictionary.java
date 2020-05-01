@@ -28,13 +28,7 @@ public class Dictionary {
 
 		if(!palabra.matches("^[a-z]*")) return;
 
-		Queue<Character> cola = new Queue();
-
-		for(int i=0; i<word.length(); i++){ // O(N)
-			cola.enqueue(word.charAt(i)); // charAt(i)-->O(1)
-		}
-
-		recursiveInsert(cola,node);
+		insertInTreeRecursive(word,node);
 
 	}
 
@@ -142,86 +136,68 @@ public class Dictionary {
 		return retorno;
 	}
 
-	private void recursiveInsert(Queue<Character> cola, GTreeIF<Node> node){
-		GTreeIF<Node> gt = new GTree<Node>();
-		LetterNode nd;
-		int pos=0;
+	private void insertInTreeRecursive(String word, GTreeIF<Node> node) {
+		GTreeIF<Node> gt = null;
+		LetterNode ln;
+		WordNode wn;
 
-		if(node.getRoot().getNodeType() != Node.NodeType.WORDNODE){
+		for(int i=1; i<=node.getNumChildren() && word.length()>0; i++){ // O(N^2)
+			gt = node.getChild(i); // O(N)
 
-			for(int i=1; cola.size()>0 && i<=node.getNumChildren(); i++){
-				gt = node.getChild(i);
+			if(gt.getRoot().getNodeType() != Node.NodeType.WORDNODE){
+				ln = (LetterNode) gt.getRoot();
 
-				if(gt.getRoot().getNodeType() != Node.NodeType.WORDNODE) {
+				if(ln.getCaracter() > word.charAt(0)){
+					gt = new GTree();
+					ln = new LetterNode(word.charAt(0));
+					gt.setRoot(ln);
+					node.addChild(i,gt);
+					i = node.getNumChildren(); // salimos
 
-					nd = (LetterNode) node.getChild(i).getRoot();
+				}else if(ln.getCaracter() < word.charAt(0) && i == node.getNumChildren()){
+					gt = new GTree();
+					ln = new LetterNode(word.charAt(0));
+					gt.setRoot(ln);
+					node.addChild(i+1,gt);
 
-					if (nd.getCaracter() < cola.getFirst()) {
-						pos = i + 1;
-
-					} else if (nd.getCaracter() > cola.getFirst()) {
-						pos = i;
-						i = node.getNumChildren(); //salir
-
-					} else if (nd.getCaracter() == cola.getFirst()) {
-						pos = 0;
-						i = node.getNumChildren(); //salir
-
-					}
-
+				}else if(ln.getCaracter() == word.charAt(0)){
+					i = node.getNumChildren(); // salimos
 				}
+
+			}else if(gt.getRoot().getNodeType() == Node.NodeType.WORDNODE && node.getNumChildren()==1){
+				gt = new GTree();
+				ln = new LetterNode(word.charAt(0));
+				gt.setRoot(ln);
+				node.addChild(1,gt);
 
 			}
-
-			if(pos != 0) {
-				gt = new GTree<Node>();
-				gt.setRoot(new LetterNode(cola.getFirst()));
-				node.addChild(pos, gt);
-
-				if(cola.size()>0)cola.dequeue();
-
-				if(cola.size() == 0){
-					WordNode wn = new WordNode();
-					GTreeIF<Node> aux = new GTree<Node>();
-					aux.setRoot(wn);
-					gt.addChild(1,aux);
-				}
-
-			}else if(node.getRoot().getNodeType() != Node.NodeType.WORDNODE && node.getNumChildren()==0){
-
-				gt = new GTree<Node>();
-				gt.setRoot(new LetterNode(cola.getFirst()));
-				node.addChild(1, gt);
-
-				if(cola.size()>0)cola.dequeue();
-
-				if(cola.size() == 0){
-					WordNode wn = new WordNode();
-					GTreeIF<Node> aux = new GTree<Node>();
-					aux.setRoot(wn);
-					gt.addChild(1,aux);
-				}
-
-			}else{
-
-				if(cola.size()>0)cola.dequeue();
-
-				if(cola.size() == 0 &&
-						node.getNumChildren()!=0 &&
-						node.getChild(1).getRoot().getNodeType() != Node.NodeType.WORDNODE){
-
-					WordNode wn = new WordNode();
-					GTreeIF<Node> aux = new GTree<Node>();
-					aux.setRoot(wn);
-					gt.addChild(1,aux);
-
-				}
-
-			}
-
-			if(cola.size() > 0 )recursiveInsert(cola,gt);
 
 		}
+
+		if(node.getNumChildren() == 0){
+
+			if (word.length() == 0) {
+				gt = new GTree();
+				wn = new WordNode();
+				gt.setRoot(wn);
+				node.addChild(1,gt);
+				return; //terminamos
+
+			}else{
+				gt = new GTree();
+				ln = new LetterNode(word.charAt(0));
+				gt.setRoot(ln);
+				node.addChild(1,gt);
+
+			}
+
+		}else{
+			if(word.length() == 0) return; //terminamos
+		}
+
+		word = eliminarLetra(word,word.charAt(0)); // O(N)
+
+		if(gt != null)insertInTreeRecursive(word,gt);
 
 	}
 	
