@@ -70,6 +70,8 @@ public class Dictionary {
 					searchInTree(sequence, word, gt, salida);
 				}
 
+				encontrado = false;
+
 			} else if (gt.getRoot().getNodeType() == Node.NodeType.WORDNODE) {
 				salida.add(word);
 			}
@@ -114,6 +116,8 @@ public class Dictionary {
 				if(encontrado) {
 					searchInTreeN(sequence, word, gt, salida,size-1);
 				}
+
+				encontrado = false;
 
 			} else if (gt.getRoot().getNodeType() == Node.NodeType.WORDNODE && size == 0) {
 				salida.add(word);
@@ -168,7 +172,7 @@ public class Dictionary {
 				gt = new GTree();
 				ln = new LetterNode(word.charAt(0));
 				gt.setRoot(ln);
-				node.addChild(1,gt);
+				node.addChild(2,gt);
 
 			}
 
