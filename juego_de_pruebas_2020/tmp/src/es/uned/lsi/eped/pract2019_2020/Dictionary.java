@@ -2,12 +2,10 @@ package es.uned.lsi.eped.pract2019_2020;
 
 import es.uned.lsi.eped.DataStructures.GTree;
 import es.uned.lsi.eped.DataStructures.GTreeIF;
-import es.uned.lsi.eped.DataStructures.Queue;
 
 public class Dictionary {
 
-	// Restaurar //private GTree<Node> dict; /* El diccionario es un árbol general de nodos */
-	public GTree<Node> dict; /* El diccionario es un árbol general de nodos */
+	private GTree<Node> dict; /* El diccionario es un árbol general de nodos */
 
 	/* Constructor de la clase */
 	public Dictionary() {
