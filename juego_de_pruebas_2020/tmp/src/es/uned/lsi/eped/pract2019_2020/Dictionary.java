@@ -24,7 +24,7 @@ public class Dictionary {
 
 		String palabra = word.trim().toLowerCase();
 
-		if(!palabra.matches("^[a-z]*")) return;
+		if(!palabra.matches("^[a-zñ]*-?[a-zñ]*$")) return;
 
 		insertInTreeRecursive(word,node);
 
