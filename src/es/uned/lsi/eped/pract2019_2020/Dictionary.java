@@ -24,7 +24,7 @@ public class Dictionary {
 
 		String palabra = word.trim().toLowerCase();
 
-		if(!palabra.matches("^[a-z]*")) return;
+		if(!palabra.matches("^[a-zñüç]*-?[a-zñüç]*$")) return;
 
 		insertInTreeRecursive(word,node);
 
@@ -194,7 +194,17 @@ public class Dictionary {
 			}
 
 		}else{
-			if(word.length() == 0) return; //terminamos
+			//if(word.length() == 0) return; //terminamos
+			if(word.length() == 0 && node.getChild(1).getRoot().getNodeType() == Node.NodeType.WORDNODE){
+				return; //terminamos
+
+			}else if(word.length()==0 && node.getChild(1).getRoot().getNodeType() != Node.NodeType.WORDNODE){
+				gt = new GTree();
+				wn = new WordNode();
+				gt.setRoot(wn);
+				node.addChild(1,gt);
+				return; //terminamos
+			}
 		}
 
 		word = eliminarLetra(word,word.charAt(0)); // O(N)
